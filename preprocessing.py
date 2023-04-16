@@ -55,6 +55,7 @@ def label_encode(data, data_type):
         data["class"] = data["class"].replace(">50K", 1)
         data["class"] = data["class"].replace("<=50K", 0)
 
+
     return data
 
 def fill_nans(data):

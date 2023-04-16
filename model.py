@@ -85,8 +85,10 @@ def predict(model, data):
     :param data: data to be classified
     :return:
     """
+    ids = data["RowID"].copy()
     data.drop(columns=["RowID"], inplace=True)
     data['p'] = model.predict(data)
+    data["RowID"] = ids
     return data
 
 
@@ -108,6 +110,20 @@ def calculate_revenue(data, train_results):
     print(f"Estimated balance: {balance}")
 
 
+def save_predictions(data):
+    """
+    Filters out the potential customers with p = 1 and stores their ids in output.txt
+    :param data: final dataframe
+    :return:
+    """
+    ids = data[data['p'] == 1]["RowID"].copy()
+    output = ""
+    for id in ids:
+        output += f"{id}\n"
+    with open("output.txt", 'w') as f:
+        f.write(output)
+
+
 if __name__ == "__main__":
     train_data = load_dataset('existing-customers.csv')
     predict_data = load_dataset('potential-customers.csv')
@@ -125,4 +141,5 @@ if __name__ == "__main__":
 
     predict_data = predict(model, predict_data)
     calculate_revenue(predict_data, train_results)
+    save_predictions(predict_data)
 
